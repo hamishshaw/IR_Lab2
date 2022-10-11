@@ -30,7 +30,7 @@ end
 
             % Create the UR3 model mounted on a linear rail
             L(1) = Link([pi     0        0        pi/2    1]); % PRISMATIC Link
-            L(2) = Link([0      0.1519   0        pi/2    0]);
+            L(2) = Link([0      0.2400   0        pi/2    0]);
             L(3) = Link([0      0       -0.24365  0       0]);
             L(4) = Link([0      0       -0.21325  0       0]);
             L(5) = Link([0      0.11235  0        pi/2    0]);
