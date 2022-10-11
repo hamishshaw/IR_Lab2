@@ -32,13 +32,17 @@ classdef LBRiiwa14R820 < handle
         function GetRobotModel(self)                                        %> Reference from https://www.oir.caltech.edu/twiki_oir/pub/Palomar/ZTF/KUKARoboticArmMaterial/Spez_LBR_iiwa_en.pdf, page 17-21
             pause(0.001);
             name = ['LBRiiwa14R820@',datestr(now,'yyyymmddTHHMMSSFFF')];
-            L(1) = Link('d',0.360,'a',0,'alpha', deg2rad(90));
+%             L(1) = Link('d',0.360,'a',0,'alpha', deg2rad(90));
+            L(1) = Link('d',0.180,'a',0,'alpha', deg2rad(90));
             L(2) = Link('d',0    ,'a',0,'alpha',-deg2rad(90));
-            L(3) = Link('d',0.420,'a',0,'alpha', deg2rad(90));
+%             L(3) = Link('d',0.420,'a',0,'alpha', deg2rad(90));
+            L(3) = Link('d',0.210,'a',0,'alpha', deg2rad(90));
             L(4) = Link('d',0    ,'a',0,'alpha',-deg2rad(90));
-            L(5) = Link('d',0.400,'a',0,'alpha', deg2rad(90));
+%             L(5) = Link('d',0.400,'a',0,'alpha', deg2rad(90));
+            L(5) = Link('d',0.200,'a',0,'alpha', deg2rad(90));
             L(6) = Link('d',0    ,'a',0,'alpha',-deg2rad(90));
-            L(7) = Link('d',0.126,'a',0,'alpha', deg2rad(0));
+%             L(7) = Link('d',0.126,'a',0,'alpha', deg2rad(0));
+            L(7) = Link('d',0.063,'a',0,'alpha', deg2rad(0));
 
             % Joint Coordinate Offset
             L(1).offset = deg2rad(90);
