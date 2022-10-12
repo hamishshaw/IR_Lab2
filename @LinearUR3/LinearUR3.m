@@ -12,16 +12,16 @@ classdef LinearUR3 < handle
     
     methods%% Class for UR3 robot simulation
         function self = LinearUR3(useGripper)
-    self.useGripper = useGripper;
+        self.useGripper = useGripper;
     
-%> Define the boundaries of the workspace
-
+        %> Define the boundaries of the workspace
         
-% robot = 
-self.GetUR3Robot();
-% robot = 
-self.PlotAndColourRobot();%robot,workspace);
-end
+        % robot = 
+        self.GetUR3Robot();
+        % robot = 
+        self.PlotAndColourRobot();%robot,workspace);
+        end
+
         %% GetUR3Robot
         % Given a name (optional), create and return a UR3 robot model
         function GetUR3Robot(self)
@@ -35,7 +35,7 @@ end
             L(4) = Link([0      0       -0.21325  0       0]);
             L(5) = Link([0      0.11235  0        pi/2    0]);
             L(6) = Link([0      0.08535  0       -pi/2	  0]);
-            L(7) = Link([0      0.0819   0        0       0]);
+            L(7) = Link([0      0.08190  0        0       0]);
 
             % Incorporate joint limits
             L(1).qlim = [-0.8 0];
