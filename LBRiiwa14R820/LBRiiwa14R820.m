@@ -11,7 +11,6 @@ classdef LBRiiwa14R820 < handle
         qDefault = [0,0.5236,-2.0944,-1.3963,-1.5708,0.3491,0];
     end
         
-
     properties
         %> Robot model
         model;
@@ -69,7 +68,6 @@ classdef LBRiiwa14R820 < handle
 
             % Display Robot
             self.model.plot3d(zeros(1,self.model.n),'noarrow','workspace',self.workspace);
-%             self.model.plot(zeros(1,self.model.n),'noarrow','workspace',self.workspace);
             if isempty(findobj(get(gca,'Children'),'Type','Light'))
                 camlight
             end  
