@@ -9,6 +9,10 @@ classdef LinearLBRiiwa14R820 < handle
 
         %> Flag to indicate if gripper is used
         useGripper = false;
+
+        %>Joint Angles
+        qs = [0,0,pi/2,0,0,0,pi/2,0];
+
     end
 
     methods%% Class for UR3 robot simulation
@@ -23,24 +27,23 @@ classdef LinearLBRiiwa14R820 < handle
             pause(0.001);
             name = ['LBRiiwa14R820@',datestr(now,'yyyymmddTHHMMSSFFF')];
             L(1) = Link('prismatic','theta',deg2rad(180),'a',0,'alpha', deg2rad(90)); % Rail parameter
-            L(2) = Link(            'd',0.268          ,'a',0,'alpha', deg2rad(90));
-%             L(3) = Link('d',0.210,'a',0,'alpha', deg2rad(90));
-%             L(4) = Link('d',0    ,'a',0,'alpha',-deg2rad(90));
-%             L(5) = Link('d',0.200,'a',0,'alpha', deg2rad(90));
-%             L(6) = Link('d',0    ,'a',0,'alpha',-deg2rad(90));
-%             L(7) = Link('d',0.063,'a',0,'alpha', deg2rad(0));
-
-            % Joint Coordinate Offset
-%             L(1).offset = deg2rad(90);
+            L(2) = Link(            'd'    ,0.268       ,'a',0,'alpha', deg2rad(90));
+            L(3) = Link(            'd'    ,0           ,'a',0,'alpha',-deg2rad(90));
+            L(4) = Link(            'd'    ,0.210       ,'a',0,'alpha', deg2rad(90));
+            L(5) = Link(            'd'    ,0           ,'a',0,'alpha',-deg2rad(90));
+            L(6) = Link(            'd'    ,0.200       ,'a',0,'alpha', deg2rad(90));
+            L(7) = Link(            'd'    ,0           ,'a',0,'alpha',-deg2rad(90));
+            L(8) = Link(            'd'    ,0.063       ,'a',0,'alpha', deg2rad(0));
 
             % Joint Coordinate Limits
             L(1).qlim = [-0.8,0];
             L(2).qlim = deg2rad([-170,170]);
-%             L(3).qlim = deg2rad([-170,170]);
-%             L(4).qlim = deg2rad([-120,120]);
-%             L(5).qlim = deg2rad([-170,170]);
-%             L(6).qlim = deg2rad([-120,120]);
-%             L(7).qlim = deg2rad([-175,175]);
+            L(3).qlim = deg2rad([-120,120]);
+            L(4).qlim = deg2rad([-170,170]);
+            L(5).qlim = deg2rad([-120,120]);
+            L(6).qlim = deg2rad([-170,170]);
+            L(7).qlim = deg2rad([-120,120]);
+            L(8).qlim = deg2rad([-175,175]);
 
             self.model = SerialLink(L,'name',name);
             % Rotate robot to the correct orientation
@@ -60,7 +63,7 @@ classdef LinearLBRiiwa14R820 < handle
             end
 
             % Display Robot
-            self.model.plot3d(zeros(1,self.model.n),'noarrow','workspace',self.workspace);
+            self.model.plot3d(self.qs,'noarrow','workspace',self.workspace);
             if isempty(findobj(get(gca,'Children'),'Type','Light'))
                 camlight
             end  
