@@ -16,7 +16,7 @@ classdef LBRiiwa14R820 < handle
         model;
 
         %> Workspace
-        workspace = [-1.5 1.5 -1.5 1.5 -0.2 1.5];
+        workspace = [-1.5 1.5 -1.5 1.5 0 1.5];
 
     end
 
@@ -52,6 +52,9 @@ classdef LBRiiwa14R820 < handle
             L(7).qlim = deg2rad([-175,175]);
 
             self.model = SerialLink(L,'name',name);
+            % Rotate robot to the correct orientation
+            self.model.base = self.model.base*transl(0,0.3,1.2);
+            self.model.base = self.model.base*trotx(pi)*trotz(-pi/2);
         end
 
         %% PlotAndColourRobot
