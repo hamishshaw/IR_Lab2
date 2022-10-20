@@ -20,16 +20,26 @@ PlaceObject('Table.ply');
 PlaceObject('Beams.ply');
 
 %% Setting up UR3 and Kuka LBR iiwa 14 R820 Robot
-% Robot_UR3 = UR3;
-% hold on
-Robo_Kuka = LBRiiwa14R820;
+UR3 = LinearUR3(false);
+UR3_startQ = [0,0,-pi/2,0,-pi/2,0,0];
+UR3.model.animate(UR3_startQ)
+% Desired Roll = 180, Pitch = 0 (facing down)
+hold on
+KUKA = LBRiiwa14R820;
 
 % startQ = zeros(1,7);
 % UR3.model.animate(startQ)
-% kuka.model.animate(startQ)
+% KUKA.model.animate(startQ)
 
 %% Setting up grippers
 % UR3 gripper (suction)
-
+workspace = [-0.5 0.5 -0.5 0.5 -0.3 0.5];
+L1 = Link('d',0,'a',0,'alpha',0, 'offset',0);
+UR3Grip = SerialLink([L1],'name','UR3Grip');
+UR3Grip.base = UR3.model.fkine(UR3_startQ) * trotx(pi) * transl(0,0,-0.11);
+[faceData,vertexData] = plyread('vacuumGripper.ply','tri');
+UR3Grip.faces = {faceData, []};
+UR3Grip.points = {vertexData, []};
+plot3d(UR3Grip,0,'workspace',workspace);
 
 % kuka gripper
