@@ -53,8 +53,7 @@ classdef LBRiiwa14R820 < handle
 
             self.model = SerialLink(L,'name',name);
             % Rotate robot to the correct orientation
-            self.model.base = self.model.base*transl(-0.08,0.3,0.395);%transl(0,0.3,1.2);
-%             self.model.base = self.model.base*trotx(pi)*trotz(-pi/2);
+            self.model.base = self.model.base*transl(-0.08,0.3,0.395);
         end
 
         %% PlotAndColourRobot
