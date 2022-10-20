@@ -33,7 +33,7 @@ KUKA = LBRiiwa14R820;
 
 %% Setting up grippers
 % UR3 gripper (suction)
-workspace = [-0.5 0.5 -0.5 0.5 -0.3 0.5];
+workspace = [-0.5 0.5 -0.5 0.5 0 0.5];
 L1 = Link('d',0,'a',0,'alpha',0, 'offset',0);
 UR3Grip = SerialLink([L1],'name','UR3Grip');
 UR3Grip.base = UR3.model.fkine(UR3_startQ) * trotx(pi) * transl(0,0,-0.11);
