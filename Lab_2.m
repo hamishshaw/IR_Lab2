@@ -75,3 +75,4 @@ ur3Grip.points = {vertexData, []};
 plot3d(ur3Grip,0,'workspace',workspace);
 
 % kuka gripper
+kukaGrip = Gripper(kuka.model.fkine(kuka.model.getpos()));
