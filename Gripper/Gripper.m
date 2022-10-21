@@ -28,8 +28,8 @@ classdef Gripper < handle
     end
 
     methods
-        function self = Gripper()
-            self.GetGripperBaseModel();
+        function self = Gripper(robotEndEffector)
+            self.GetGripperBaseModel(robotEndEffector);
             self.PlotAndColourGipperBase();
             self.GetFingerModel();
             self.PlotAndColourFinger1();
@@ -37,8 +37,8 @@ classdef Gripper < handle
             self.PlotAndColourFinger3();
         end
 
-        function gripperAnimate(self, RobotEndEffectorPos)
-            self.gBase.base = RobotEndEffectorPos;
+        function gripperAnimate(self, robotEndEffectorPos)
+            self.gBase.base = robotEndEffectorPos;
             self.gBase.animate(0);
             self.finger1.base = self.gBase.base * self.finger1Location;
             self.finger1.animate(0);
@@ -77,12 +77,14 @@ classdef Gripper < handle
 
     methods (Access = protected)
         %% GetGripperBaseModel
-        function GetGripperBaseModel(self)
+        function GetGripperBaseModel(self,robotEndEffector)
             pause(0.001);
             name = ['Gripper_Base',datestr(now,'yyyymmddTHHMMSSFFF')];
             L1 = Link('d',0,'a',0,'alpha',0,'qlim',deg2rad([-360 360]));
             self.gBase = SerialLink(L1,'name',name);
 
+            % Position of base
+            self.gBase.base = robotEndEffector;
         end
 
         %% GetFingerModel()
@@ -98,13 +100,13 @@ classdef Gripper < handle
             name = ['Gripper_Finger3',datestr(now,'yyyymmddTHHMMSSFFF')];
             self.finger3 = SerialLink(L1,'name',name);
 
-            % Rotate finger 1 to the correct orientation
+            % Rotate and Position finger 1
             self.finger1.base = self.gBase.base * self.finger1Location;
 
-            % Rotate finger 2 to the correct orientation
+            % Rotate and Position finger 2
             self.finger2.base = self.gBase.base * self.finger2Location;
 
-            % Rotate finger 3 to the correct orientation
+            % Rotate and Position finger 3
             self.finger3.base = self.gBase.base * self.finger3Location;
         end
 
