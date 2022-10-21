@@ -71,6 +71,7 @@ ur3Grip.points = {vertexData, []};
 plot3d(ur3Grip,0,'workspace',workspace);
 
 % kuka gripper
+kukaGrip = Gripper(kuka.model.fkine(kuka.model.getpos()));
 % L1 = Link('d',0,'a',0,'alpha',0, 'offset',0);
 % kukaGrip = SerialLink([L1],'name','kukaGrip');
 % kukaGrip.base = kuka.model.fkine(kuka_startQ) * trotx(pi) * transl(0,0,-0.11);
@@ -122,6 +123,7 @@ for i=1:steps
     drawnow();
     pause(0.01);
 end
+
 %% RMRC function
 function [qMatrix, steps] = RMRC(name, time, xyz2, theta2)
     deltaT = 0.02;      % Control frequency
