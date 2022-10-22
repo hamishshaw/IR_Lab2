@@ -55,6 +55,7 @@ small.base = transl(0,0.65,0.4);
 [faceData,vertexData] = plyread('smallerBox.ply','tri');
 small.faces = {faceData, []};
 small.points = {vertexData, []};
+small.delay = 0;
 
 %% Setting up UR3 and Kuka LBR iiwa 14 R820 Robot
 ur3 = LinearUR3(false);
@@ -68,6 +69,7 @@ hold on
 kuka = LBRiiwa14R820;
 kuka_startQ = [pi/2 0 0 pi/2 0 pi/2 0];
 kuka.model.base = transl(0,0.35,0.4);
+kuka.model.delay = 0;
 kuka.model.animate(kuka_startQ)
 GUI.KUKA = kuka.model;
 
