@@ -7,7 +7,7 @@ hold on;
 axis equal;
 axis on;
 %loading GUI
-GUI = move_GUI;
+% GUI = move_GUI;
 
 
 
@@ -22,14 +22,14 @@ emptybox = placeply('box.ply',0,0.8,.4,0);
 vertex = bigboxVert(:,1:3);
 %generating robots
 robot = UR3;
-GUI.UR3 = robot.model;
+% GUI.UR3 = robot.model;
 robot.model.base = transl(0,-0.1,0.9)*trotx(pi);
 robot.model.animate([0 0 0 0 0 0]);
 
 kuka = LBRiiwa14R820;
-GUI.KUKA = kuka.model;
+% GUI.KUKA = kuka.model;
 kuka.model.base = transl(0,0.5,0.9)*trotx(pi);
-kuka.model.animate(kuka.qz);
+kuka.model.animate([-0.0019 -1.4953 0.0005 1.8637 0.0017 -0.3292 -0.0006]);
 
 %setting up ray path for checking box position
 startP = robot.model.base(1:3,4)';
@@ -38,6 +38,9 @@ maxRange = 3;
 rayAtOrigin = maxRange * -starttr(1:3,1)';
 rayEnd = startP + rayAtOrigin;
 yRotAxis = starttr(1:3,2)';
+
+pause(5);
+
 
 %creating a path for the box
 for i = 1:100
@@ -54,7 +57,7 @@ for i = 1:100
     
     for yRotRads = deg2rad(20):deg2rad(1):deg2rad(30)
         tr = makehgtform('axisrotate',yRotAxis,yRotRads);
-        rayEnd = startP +  rayAtOrigin * tr(1:3,1:3)
+        rayEnd = startP +  rayAtOrigin * tr(1:3,1:3);
         
         %check for intersection with box
         for faceIndex = 1:size(bigboxfaces,1)
@@ -69,7 +72,7 @@ for i = 1:100
         
         
     end
-pause(0.3);
+pause(0.2);
 
 
 end
