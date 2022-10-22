@@ -38,6 +38,7 @@ classdef Gripper < handle
         end
 
         function gripperAnimate(self, robotEndEffectorPos)
+            self.delay = 0;
             self.gBase.base = robotEndEffectorPos;
             self.gBase.animate(0);
             self.finger1.base = self.gBase.base * self.finger1Location;
