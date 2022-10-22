@@ -15,11 +15,12 @@ GUI.KUKA = kuka.model;
 GUI.UR3 = UR3.model;
 %making some path
 steps = 50;
-qstart = [0 0 pi/2 pi pi/4 pi/4 pi/2];
+qstart = [-pi/4 pi/2 -pi/4 pi/2 pi/4 pi/4 pi/2];
 qend = zeros(1,UR3.model.n);
 qmatrix = jtraj(qstart,qend,steps);
+UR3.model.base = transl(0,0,0)*trotx(pi/2);
 UR3.model.animate(qstart);
-
+pause(5);
 
 %testing to see how estop can be integrated
 %i have tried to get this while loop thing that holds the code in a loop
