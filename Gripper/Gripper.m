@@ -10,7 +10,7 @@ classdef Gripper < handle
         finger2Location = trotx(-pi/2) * troty(-pi/2) * transl(-0.0225,-0.043,0.0175);
         finger3Location = trotx(-pi/2) * troty(-pi/2) * transl(-0.0225,-0.043,-0.0175);
 
-        Fqo = deg2rad(30);
+        Fqo = deg2rad(15);
 
         step = 100;
     end
@@ -38,7 +38,10 @@ classdef Gripper < handle
         end
 
         function gripperAnimate(self, robotEndEffectorPos)
-            self.delay = 0;
+            self.gBase.delay = 0;
+            self.finger1.delay = 0;
+            self.finger2.delay = 0;
+            self.finger3.delay = 0;
             self.gBase.base = robotEndEffectorPos;
             self.gBase.animate(0);
             self.finger1.base = self.gBase.base * self.finger1Location;

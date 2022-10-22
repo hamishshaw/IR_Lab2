@@ -85,129 +85,143 @@ ur3Grip.delay = 0;
 % kuka gripper
 kukaGrip = Gripper(kuka.model.fkine(kuka.model.getpos())); % Base approx 0.05m high
 
-%% Moving the boxes
-% Move to box 1
-tr = box1.fkine(0) * transl(0,0,0.32);
-xyz2 = tr(1:3,4);
-theta2 = deg2rad([180 0 0]);
-[qMatrix, steps] = RMRC2(ur3, 10, xyz2, theta2);
-for i=1:steps
-    ur3.model.animate(qMatrix(i,:))
-    ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
-    ur3Grip.animate(0)
-    drawnow();
-end
-
-% Lift box 1 directly up
-tr = box1.fkine(0);
-xyz2 = tr(1:3,4);
-xyz2(3) = 0.75;
-theta2 = deg2rad([180 0 0]);
-[qMatrix, steps] = RMRC(ur3, 3, xyz2, theta2);
-for i=1:steps
-    ur3.model.animate(qMatrix(i,:))
-    ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
-    ur3Grip.animate(0)
-    box1.base = ur3.model.fkine(qMatrix(i,:)) * trotz(pi) * transl(0,0,0.11);
-    box1.animate(0)
-    drawnow();
-end
-
-% Move to table
-tr = transl(0,0.65,0.75);
-xyz2 = tr(1:3,4);
-theta2 = deg2rad([180 0 0]);
-[qMatrix, steps] = RMRC(ur3, 3, xyz2, theta2);
-for i=1:steps
-    ur3.model.animate(qMatrix(i,:))
-    ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
-    ur3Grip.animate(0)
-    box1.base = ur3.model.fkine(qMatrix(i,:)) * trotz(pi) * transl(0,0,0.11);
-    box1.animate(0)
-    drawnow();
-end
-
-% Place on table
-tr = transl(0,0.65,0.7);
-xyz2 = tr(1:3,4);
-theta2 = deg2rad([180 0 0]);
-[qMatrix, steps] = RMRC(ur3, 2, xyz2, theta2);
-for i=1:steps
-    ur3.model.animate(qMatrix(i,:))
-    ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
-    ur3Grip.animate(0)
-    box1.base = ur3.model.fkine(qMatrix(i,:)) * trotz(pi) * transl(0,0,0.11);
-    box1.animate(0)
-    drawnow();
-end
-
-% Move away from box
-tr = transl(0,0.65,0.75);
-xyz2 = tr(1:3,4);
-theta2 = deg2rad([180 0 0]);
-[qMatrix, steps] = RMRC(ur3, 3, xyz2, theta2);
-for i=1:steps
-    ur3.model.animate(qMatrix(i,:))
-    ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
-    ur3Grip.animate(0)
-    drawnow();
-end
-
-pause(2);
+% %% Moving the boxes
+% % Move to box 1
+% tr = box1.fkine(0) * transl(0,0,0.32);
+% xyz2 = tr(1:3,4);
+% theta2 = deg2rad([180 0 0]);
+% [qMatrix, steps] = RMRC2(ur3, 10, xyz2, theta2);
+% for i=1:steps
+%     ur3.model.animate(qMatrix(i,:))
+%     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
+%     ur3Grip.animate(0)
+%     drawnow();
+% end
+% 
+% % Lift box 1 directly up
+% tr = box1.fkine(0);
+% xyz2 = tr(1:3,4);
+% xyz2(3) = 0.75;
+% theta2 = deg2rad([180 0 0]);
+% [qMatrix, steps] = RMRC(ur3, 3, xyz2, theta2);
+% for i=1:steps
+%     ur3.model.animate(qMatrix(i,:))
+%     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
+%     ur3Grip.animate(0)
+%     box1.base = ur3.model.fkine(qMatrix(i,:)) * trotz(pi) * transl(0,0,0.11);
+%     box1.animate(0)
+%     drawnow();
+% end
+% 
+% % Move to table
+% tr = transl(0,0.65,0.75);
+% xyz2 = tr(1:3,4);
+% theta2 = deg2rad([180 0 0]);
+% [qMatrix, steps] = RMRC(ur3, 3, xyz2, theta2);
+% for i=1:steps
+%     ur3.model.animate(qMatrix(i,:))
+%     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
+%     ur3Grip.animate(0)
+%     box1.base = ur3.model.fkine(qMatrix(i,:)) * trotz(pi) * transl(0,0,0.11);
+%     box1.animate(0)
+%     drawnow();
+% end
+% 
+% % Place on table
+% tr = transl(0,0.65,0.7);
+% xyz2 = tr(1:3,4);
+% theta2 = deg2rad([180 0 0]);
+% [qMatrix, steps] = RMRC(ur3, 2, xyz2, theta2);
+% for i=1:steps
+%     ur3.model.animate(qMatrix(i,:))
+%     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
+%     ur3Grip.animate(0)
+%     box1.base = ur3.model.fkine(qMatrix(i,:)) * trotz(pi) * transl(0,0,0.11);
+%     box1.animate(0)
+%     drawnow();
+% end
+% 
+% % Move away from box
+% tr = transl(0,0.65,0.75);
+% xyz2 = tr(1:3,4);
+% theta2 = deg2rad([180 0 0]);
+% [qMatrix, steps] = RMRC(ur3, 3, xyz2, theta2);
+% for i=1:steps
+%     ur3.model.animate(qMatrix(i,:))
+%     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
+%     ur3Grip.animate(0)
+%     drawnow();
+% end
+% 
+% pause(2);
 plot3d(small,0,'workspace',workspace);
-
-% Move to box again
-tr = transl(0,0.65,0.7);
-xyz2 = tr(1:3,4);
-theta2 = deg2rad([180 0 0]);
-[qMatrix, steps] = RMRC(ur3, 2, xyz2, theta2);
-for i=1:steps
-    ur3.model.animate(qMatrix(i,:))
-    ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
-    ur3Grip.animate(0)
-    drawnow();
-end
-
-% Lift box directly up
-tr = transl(0,0.65,0.8);
-xyz2 = tr(1:3,4);
-theta2 = deg2rad([180 0 0]);
-[qMatrix, steps] = RMRC(ur3, 2, xyz2, theta2);
-for i=1:steps
-    ur3.model.animate(qMatrix(i,:))
-    ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
-    ur3Grip.animate(0)
-    box1.base = ur3.model.fkine(qMatrix(i,:)) * trotz(pi) * transl(0,0,0.11);
-    box1.animate(0)
-    drawnow();
-end
-
-% Move box towards bin
-tr = transl(-0.5,0.5,0.8);
-xyz2 = tr(1:3,4);
-theta2 = deg2rad([180 0 90]);
-[qMatrix, steps] = RMRC(ur3, 5, xyz2, theta2);
-for i=1:steps
-    ur3.model.animate(qMatrix(i,:))
-    ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
-    ur3Grip.animate(0)
-    box1.base = ur3.model.fkine(qMatrix(i,:)) * trotz(pi) * transl(0,0,0.11);
-    box1.animate(0)
-    drawnow();
-end
+% 
+% % Move to box again
+% tr = transl(0,0.65,0.7);
+% xyz2 = tr(1:3,4);
+% theta2 = deg2rad([180 0 0]);
+% [qMatrix, steps] = RMRC(ur3, 2, xyz2, theta2);
+% for i=1:steps
+%     ur3.model.animate(qMatrix(i,:))
+%     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
+%     ur3Grip.animate(0)
+%     drawnow();
+% end
+% 
+% % Lift box directly up
+% tr = transl(0,0.65,0.8);
+% xyz2 = tr(1:3,4);
+% theta2 = deg2rad([180 0 0]);
+% [qMatrix, steps] = RMRC(ur3, 2, xyz2, theta2);
+% for i=1:steps
+%     ur3.model.animate(qMatrix(i,:))
+%     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
+%     ur3Grip.animate(0)
+%     box1.base = ur3.model.fkine(qMatrix(i,:)) * trotz(pi) * transl(0,0,0.11);
+%     box1.animate(0)
+%     drawnow();
+% end
+% 
+% % Move box towards bin
+% tr = transl(-0.5,0.5,0.8);
+% xyz2 = tr(1:3,4);
+% theta2 = deg2rad([180 0 90]);
+% [qMatrix, steps] = RMRC(ur3, 5, xyz2, theta2);
+% for i=1:steps
+%     ur3.model.animate(qMatrix(i,:))
+%     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
+%     ur3Grip.animate(0)
+%     box1.base = ur3.model.fkine(qMatrix(i,:)) * trotz(pi) * transl(0,0,0.11);
+%     box1.animate(0)
+%     drawnow();
+% end
 
 % Using the KUKA now
-% Go to small box
-tr = small.fkine(0) * transl(0,0,0.1);
+% Go above small box
+tr = small.fkine(0) * transl(0,0,0.3);
 xyz2 = tr(1:3,4);
-xyz2(3)
 theta2 = deg2rad([180 0 0]);
+openGripper(kukaGrip);
 [qMatrix, steps] = RMRC(kuka, 10, xyz2, theta2);
 for i=1:steps
+    gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
     kuka.model.animate(qMatrix(i,:))
     drawnow();
 end
 
+% Go to small box
+tr = small.fkine(0) * transl(0,0,0.15);
+xyz2 = tr(1:3,4);
+theta2 = deg2rad([180 0 0]);
+openGripper(kukaGrip);
+[qMatrix, steps] = RMRC(kuka, 5, xyz2, theta2);
+for i=1:steps
+    gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
+    kuka.model.animate(qMatrix(i,:))
+    drawnow();
+end
+
+closeGripper(kukaGrip);
 % Pick up small box
 tr = small.fkine(0);
 xyz2 = tr(1:3,4);
@@ -216,7 +230,8 @@ theta2 = deg2rad([180 0 0]);
 [qMatrix, steps] = RMRC(kuka, 3, xyz2, theta2);
 for i=1:steps
     kuka.model.animate(qMatrix(i,:))
-    small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.03);
+    gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
+    small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.08);
     small.animate(0)
     drawnow();
 end
@@ -228,7 +243,8 @@ theta2 = deg2rad([180 0 90]);
 [qMatrix, steps] = RMRC(kuka, 5, xyz2, theta2);
 for i=1:steps
     kuka.model.animate(qMatrix(i,:))
-    small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.03);
+    gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
+    small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.08);
     small.animate(0)
     drawnow();
 end
@@ -240,10 +256,12 @@ theta2 = deg2rad([180 0 0]);
 [qMatrix, steps] = RMRC(kuka, 5, xyz2, theta2);
 for i=1:steps
     kuka.model.animate(qMatrix(i,:))
-    small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.03);
+    gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
+    small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.08);
     small.animate(0)
     drawnow();
 end
+openGripper(kukaGrip);
 %% RMRC function for no change in roll and pitch
 function [qMatrix, steps] = RMRC(name, time, xyz2, theta2)
     deltaT = 0.02;      % Control frequency
