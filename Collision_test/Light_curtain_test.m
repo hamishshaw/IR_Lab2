@@ -67,6 +67,7 @@ for i=1:steps
         vertex = bigboxVert(:,1:3);
         boxcount = boxcount+1;
         bigboxnormals = getfacenormals(vertex,bigboxfaces);
+        % checking each beam for collisions with each face
         for n = 1:21
             for faceIndex = 1:size(bigboxfaces,1)
                 vertOnPlane = vertex(bigboxfaces(faceIndex,1)',:);
@@ -74,47 +75,43 @@ for i=1:steps
                 if check == 1 && IsIntersectionPointInsideTriangle(intersectP,vertex(bigboxfaces(faceIndex,:)',:))
                     plot3(intersectP(1),intersectP(2),intersectP(3),'g*');
                     collision = true;
-                    if intersectP(3) > maxzclear
-                        maxzclear = intersectP(3);
-                    end
-                   
-                    display('Intersection');
+                    display('Incoming Box');
                 end
             end
         end
     end
-%moving the arm out of the way and then returning to position when safe
+     % moving the arm out of the way and then returning to position when safe
     if collision == true && collisionavoided == false
         %create path to move arm out of the way
         tr = kuka.model.fkine(qMatrix(1,:));
         xyzcollision = tr(1:3,4);
         theta2 = deg2rad([180 0 0]);
         [qMatrixmoveaway, stepscollision] = RMRC(kuka, 2, xyzcollision, theta2);
+        
         for p = 1:stepscollision
             %move the arm
             kuka.model.animate(qMatrixmoveaway(p,:));
             drawnow();
-            %also move the box 
-            if boxcount < 100
-             bigboxVert = bigboxVert*transl(-0.03,0,0)';
-             set(bigbox,'Vertices', bigboxVert(:,1:3));
-             boxcount = boxcount+1;
-             
+            %also move the box
+            if boxcount < 100 && mod(p,2)==0
+                bigboxVert = bigboxVert*transl(-0.03,0,0)';
+                set(bigbox,'Vertices', bigboxVert(:,1:3));
+                boxcount = boxcount+1;
+                
             end
-             
+            
         end
-        display('shit')
-        
-        pause(5);
-        %move the arm back
+      
+        %move the arm back to previous paused goal
         tr = kuka.model.fkine(qMatrix(i,:));
         xyzcollision = tr(1:3,4);
         theta2 = deg2rad([180 0 0]);
         [qMatrixmoveaway, stepscollision] = RMRC(kuka, 2, xyzcollision, theta2);
+        
         for p = 1:stepscollision
             kuka.model.animate(qMatrixmoveaway(p,:))
             drawnow();
-            if boxcount < 100
+            if boxcount < 100 && mod(p,2)==0
             bigboxVert = bigboxVert*transl(-0.03,0,0)';
             set(bigbox,'Vertices', bigboxVert(:,1:3));
             boxcount= boxcount+1;
