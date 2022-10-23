@@ -1,0 +1,222 @@
+clf; clear; close all; clc;
+set(0,'DefaultFigureWindowStyle','docked');
+
+% Surface
+surf([-2,-2;2,2],[-2,2;-2,2],[0.01,0.01;0.01,0.01],'CData',imread('concrete.jpg'),'FaceColor','texturemap');
+xlabel('x');
+ylabel('y');
+camlight;
+hold on;
+axis equal;
+axis on;
+% Loading the environment
+conveyor1 = placeply('Conveyor_Belt.ply',0,0,0,0);
+conveyor2 = placeply('Conveyor_Belt.ply',0,0,0,pi);
+pallet = placeply('pallet.ply',0,0.3,0,0); % 0.142m high
+beam = placeply('beams.ply',0,0.3,0,0);
+Table = placeply('Table.ply',0.5,0,0,pi/2); % 0.4m high
+Table2 = placeply('Table.ply',0.8,0,0,pi/2);
+
+
+lightcurtain1 = placeply('Light_curtain.ply',.22,-1,0,pi/2);
+lightcurtain2 = placeply('Light_curtain.ply',0.22,1,0,-pi/2);
+
+hold on
+kuka = LBRiiwa14R820;
+kuka_startQ = [pi/2 0 0 pi/2 0 pi/2 0];
+kuka.model.base = transl(0,0.35,0.4);
+kuka.model.delay = 0;
+kuka.model.animate(kuka_startQ)
+GUI.KUKA = kuka.model;
+
+%% path for kuka
+tr = transl(0,0,0.55);
+xyz2 = tr(1:3,4);
+theta2 = deg2rad([180 0 0]);
+[qMatrix, steps] = RMRC(kuka, 5, xyz2, theta2);
+%% Light beam generation
+
+startP = [1,0.25,0.4];
+starttr = transl(startP(1),startP(2),startP(3));
+maxRange = 0.5;
+rayAtOrigin = maxRange * -starttr(1:3,2)';
+rayEnd = startP + rayAtOrigin;
+LightStart = zeros(21,3);
+LightEnd = zeros(21,3);
+for i = 0:20
+    LightStart(i+1,:) = startP+[0 0 i*0.03];
+    LightEnd(i+1,:) = rayEnd+[0 0 i*0.03];
+    linecurtain = plot3([LightStart(i+1,1),LightEnd(i+1,1)],[LightStart(i+1,2),LightEnd(i+1,2)],[LightStart(i+1,3),LightEnd(i+1,3)],'r');
+end
+%% plotting path and checking for collision
+collision = false;
+collisionavoided = false;
+maxzclear = 0;
+for i=1:steps
+    %generate box at 50 steps
+    if i == 100
+        [bigboxVert,bigboxfaces,bigboxnormals,bigbox] = placeplyFV('BIG_BOX.ply',1.5,0,0.38,0);
+        vertex = bigboxVert(:,1:3);
+    end
+    %start checking for collisions
+    if i > 100 && collision == false && collisionavoided == false
+        bigboxVert = bigboxVert*transl(-0.03,0,0)';
+        set(bigbox,'Vertices', bigboxVert(:,1:3));
+        bigboxfaces = get(bigbox,'Faces');
+        vertex = bigboxVert(:,1:3);
+        bigboxnormals = getfacenormals(vertex,bigboxfaces);
+        for n = 1:21
+            for faceIndex = 1:size(bigboxfaces,1)
+                vertOnPlane = vertex(bigboxfaces(faceIndex,1)',:);
+                [intersectP,check] = LinePlaneIntersection(bigboxnormals(faceIndex,:),vertOnPlane,LightStart(n,:),LightEnd(n,:));
+                if check == 1 && IsIntersectionPointInsideTriangle(intersectP,vertex(bigboxfaces(faceIndex,:)',:))
+                    plot3(intersectP(1),intersectP(2),intersectP(3),'g*');
+                    collision = true;
+                    if intersectP(3) > maxzclear
+                        maxzclear = intersectP(3);
+                    end
+                   
+                    display('Intersection');
+                end
+            end
+        end
+    end
+%moving the arm out of the way and then returning to position when safe
+    if collision == true && collisionavoided == false
+        %create path to move arm out of the way
+        tr = kuka.model.fkine(qMatrix(1,:));
+        xyzcollision = tr(1:3,4);
+        theta2 = deg2rad([180 0 0]);
+        [qMatrixmoveaway, stepscollision] = RMRC(kuka, 2, xyzcollision, theta2);
+        for p = 1:stepscollision
+            %move the arm
+            kuka.model.animate(qMatrixmoveaway(p,:));
+            drawnow();
+            %also move the box 
+             bigboxVert = bigboxVert*transl(-0.03,0,0)';
+             set(bigbox,'Vertices', bigboxVert(:,1:3));
+             
+        end
+        display('shit')
+        
+        pause(5);
+        %move the arm back
+        tr = kuka.model.fkine(qMatrix(i,:));
+        xyzcollision = tr(1:3,4);
+        theta2 = deg2rad([180 0 0]);
+        [qMatrixmoveaway, stepscollision] = RMRC(kuka, 2, xyzcollision, theta2);
+        for p = 1:stepscollision
+            kuka.model.animate(qMatrixmoveaway(p,:))
+            drawnow();
+            bigboxVert = bigboxVert*transl(-0.03,0,0)';
+            set(bigbox,'Vertices', bigboxVert(:,1:3));
+            
+        end
+        collisionavoided = true;
+        delete(bigbox);
+    end
+  
+    %animating kuka when no collision detected
+ 
+        kuka.model.animate(qMatrix(i,:))
+        drawnow();
+ 
+    
+end
+
+
+
+
+function result = IsIntersectionPointInsideTriangle(intersectP,triangleVerts)
+
+u = triangleVerts(2,:) - triangleVerts(1,:);
+v = triangleVerts(3,:) - triangleVerts(1,:);
+
+uu = dot(u,u);
+uv = dot(u,v);
+vv = dot(v,v);
+
+w = intersectP - triangleVerts(1,:);
+wu = dot(w,u);
+wv = dot(w,v);
+
+D = uv * uv - uu * vv;
+
+% Get and test parametric coords (s and t)
+s = (uv * wv - vv * wu) / D;
+if (s < 0.0 || s > 1.0)        % intersectP is outside Triangle
+    result = 0;
+    return;
+end
+
+t = (uv * wu - uu * wv) / D;
+if (t < 0.0 || (s + t) > 1.0)  % intersectP is outside Triangle
+    result = 0;
+    return;
+end
+
+result = 1;                      % intersectP is in Triangle
+end
+function [qMatrix, steps] = RMRC(name, time, xyz2, theta2)
+    deltaT = 0.02;      % Control frequency
+    steps = time/deltaT;   % No. of steps for simulation
+    epsilon = 0.3;      % Threshold value for manipulability/Damped Least Squares
+    W = diag([1 1 1 0.1 0.1 0.1]);    % Weighting matrix for the velocity vector
+    
+    % Allocate array data
+    m = zeros(steps,1);             % Array for Measure of Manipulability
+    qMatrix = zeros(steps,7);       % Array for joint anglesR
+    qdot = zeros(steps,7);          % Array for joint velocities
+    theta = zeros(3,steps);         % Array for roll-pitch-yaw angles
+    x = zeros(3,steps);             % Array for x-y-z trajectory
+    
+    q = name.model.getpos;
+    tr = name.model.fkine(q);
+    xyz1 = tr(1:3,4);
+    theta1 = tr2rpy(tr);
+    
+    % Set up trajectory, initial pose
+    s = lspb(0,1,steps);                % Trapezoidal trajectory scalar
+    for i=1:steps
+        for j=1:3
+            x(j,i) = (1-s(i))*xyz1(j) + s(i)*xyz2(j); % XYZ points
+        end
+        theta(1,i) = pi; % Roll
+        theta(2,i) = 0; % Pitch
+        theta(3,i) = (1-s(i))*theta1(j) + s(i)*theta2(j); % Yaw
+    end
+     
+    T = [rpy2r(theta(1,1),theta(2,1),theta(3,1)) x(:,1);zeros(1,3) 1];          % Create transformation of first point and angle
+    q0 = name.model.getpos;                                                            % Initial guess for joint angles
+    qMatrix(1,:) = name.model.ikcon(T,q0);                                            % Solve joint angles to achieve first waypoint
+    
+    % Track the trajectory with RMRC
+    for i = 1:steps-1
+        T = name.model.fkine(qMatrix(i,:));                                           % Get forward transformation at current joint state
+        deltaX = x(:,i+1) - T(1:3,4);                                         	% Get position error from next waypoint
+        Rd = rpy2r(theta(1,i+1),theta(2,i+1),theta(3,i+1));                     % Get next RPY angles, convert to rotation matrix
+        Ra = T(1:3,1:3);                                                        % Current end-effector rotation matrix
+        Rdot = (1/deltaT)*(Rd - Ra);                                                % Calculate rotation matrix error
+        S = Rdot*Ra';                                                           % Skew symmetric!
+        linear_velocity = (1/deltaT)*deltaX;
+        angular_velocity = [S(3,2);S(1,3);S(2,1)];                              % Check the structure of Skew Symmetric matrix!!
+        xdot = W*[linear_velocity;angular_velocity];                          	% Calculate end-effector velocity to reach next waypoint.
+        J = name.model.jacob0(qMatrix(i,:));                 % Get Jacobian at current joint state
+        m(i) = sqrt(det(J*J'));
+        if m(i) < epsilon  % If manipulability is less than given threshold
+            lambda = (1 - m(i)/epsilon)*5E-2;
+        else
+            lambda = 0;
+        end
+        invJ = inv(J'*J + lambda *eye(7))*J';                                   % DLS Inverse
+        qdot(i,:) = (invJ*xdot)';                                                % Solve the RMRC equation (you may need to transpose the         vector)
+        for j = 1:7                                                             % Loop through joints 1 to 6
+            if qMatrix(i,j) + deltaT*qdot(i,j) < name.model.qlim(j,1)                     % If next joint angle is lower than joint limit...
+                qdot(i,j) = 0; % Stop the motor
+            elseif qMatrix(i,j) + deltaT*qdot(i,j) > name.model.qlim(j,2)                 % If next joint angle is greater than joint limit ...
+                qdot(i,j) = 0; % Stop the motor
+            end
+        end
+        qMatrix(i+1,:) = qMatrix(i,:) + deltaT*qdot(i,:);                         	% Update next joint state based on joint velocities
+    end
+end

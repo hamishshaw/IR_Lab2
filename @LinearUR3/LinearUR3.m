@@ -4,7 +4,7 @@ classdef LinearUR3 < handle
         model;
         
         %> workspace
-        workspace = [-3 2 -2 2 -1 2];    
+        workspace = [-2 2 -2 2 0 2];    
       
         %> Flag to indicate if gripper is used
         useGripper = false;  
@@ -48,8 +48,9 @@ classdef LinearUR3 < handle
              
             self.model = SerialLink(L,'name',name);
 
-            % Rotate robot to the correct orientation
-            self.model.base = self.model.base * trotx(pi/2) * troty(pi/2);
+            % Move robot to the correct orientation
+            self.model.base = self.model.base*transl(0,1.5,1.2);
+            self.model.base = self.model.base * trotx(pi/2) * troty(pi) * trotz(pi);
         end
 
 %% PlotAndColourRobot
