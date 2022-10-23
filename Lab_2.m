@@ -83,9 +83,11 @@ ur3Grip.faces = {faceData, []};
 ur3Grip.points = {vertexData, []};
 plot3d(ur3Grip,0,'workspace',workspace);
 ur3Grip.delay = 0;
+GUI.UR3Grip = ur3Grip;
 
 % kuka gripper
 kukaGrip = Gripper(kuka.model.fkine(kuka.model.getpos())); % Base approx 0.05m high
+GUI.KUKAGrip = kukaGrip;
 
 %% Moving the boxes
 % Move to box 1
@@ -94,6 +96,7 @@ xyz2 = tr(1:3,4);
 theta2 = deg2rad([180 0 0]);
 [qMatrix, steps] = RMRC2(ur3, 10, xyz2, theta2);
 for i=1:steps
+    checkEStop(GUI);
     ur3.model.animate(qMatrix(i,:))
     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
     ur3Grip.animate(0)
@@ -107,6 +110,7 @@ xyz2(3) = 0.75;
 theta2 = deg2rad([180 0 0]);
 [qMatrix, steps] = RMRC(ur3, 3, xyz2, theta2);
 for i=1:steps
+    checkEStop(GUI);
     ur3.model.animate(qMatrix(i,:))
     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
     ur3Grip.animate(0)
@@ -121,6 +125,7 @@ xyz2 = tr(1:3,4);
 theta2 = deg2rad([180 0 0]);
 [qMatrix, steps] = RMRC(ur3, 3, xyz2, theta2);
 for i=1:steps
+    checkEStop(GUI);
     ur3.model.animate(qMatrix(i,:))
     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
     ur3Grip.animate(0)
@@ -135,6 +140,7 @@ xyz2 = tr(1:3,4);
 theta2 = deg2rad([180 0 0]);
 [qMatrix, steps] = RMRC(ur3, 2, xyz2, theta2);
 for i=1:steps
+    checkEStop(GUI);
     ur3.model.animate(qMatrix(i,:))
     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
     ur3Grip.animate(0)
@@ -149,6 +155,7 @@ xyz2 = tr(1:3,4);
 theta2 = deg2rad([180 0 0]);
 [qMatrix, steps] = RMRC(ur3, 3, xyz2, theta2);
 for i=1:steps
+    checkEStop(GUI);
     ur3.model.animate(qMatrix(i,:))
     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
     ur3Grip.animate(0)
@@ -164,6 +171,7 @@ xyz2 = tr(1:3,4);
 theta2 = deg2rad([180 0 0]);
 [qMatrix, steps] = RMRC(ur3, 2, xyz2, theta2);
 for i=1:steps
+    checkEStop(GUI);
     ur3.model.animate(qMatrix(i,:))
     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
     ur3Grip.animate(0)
@@ -176,6 +184,7 @@ xyz2 = tr(1:3,4);
 theta2 = deg2rad([180 0 0]);
 [qMatrix, steps] = RMRC(ur3, 2, xyz2, theta2);
 for i=1:steps
+    checkEStop(GUI);
     ur3.model.animate(qMatrix(i,:))
     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
     ur3Grip.animate(0)
@@ -190,6 +199,7 @@ xyz2 = tr(1:3,4);
 theta2 = deg2rad([180 0 90]);
 [qMatrix, steps] = RMRC(ur3, 5, xyz2, theta2);
 for i=1:steps
+    checkEStop(GUI);
     ur3.model.animate(qMatrix(i,:))
     ur3Grip.base = ur3.model.fkine(qMatrix(i,:)) * trotx(pi) * transl(0,0,-0.11);
     ur3Grip.animate(0)
@@ -206,6 +216,7 @@ theta2 = deg2rad([180 0 0]);
 openGripper(kukaGrip);
 [qMatrix, steps] = RMRC(kuka, 10, xyz2, theta2);
 for i=1:steps
+    checkEStop(GUI);
     gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
     kuka.model.animate(qMatrix(i,:))
     drawnow();
@@ -218,6 +229,7 @@ theta2 = deg2rad([180 0 0]);
 openGripper(kukaGrip);
 [qMatrix, steps] = RMRC(kuka, 5, xyz2, theta2);
 for i=1:steps
+    checkEStop(GUI);
     gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
     kuka.model.animate(qMatrix(i,:))
     drawnow();
@@ -231,6 +243,7 @@ xyz2(3) = 0.62;
 theta2 = deg2rad([180 0 0]);
 [qMatrix, steps] = RMRC(kuka, 3, xyz2, theta2);
 for i=1:steps
+    checkEStop(GUI);
     kuka.model.animate(qMatrix(i,:))
     gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
     small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.08);
@@ -244,6 +257,7 @@ xyz2 = tr(1:3,4);
 theta2 = deg2rad([180 0 90]);
 [qMatrix, steps] = RMRC(kuka, 5, xyz2, theta2);
 for i=1:steps
+    checkEStop(GUI);
     kuka.model.animate(qMatrix(i,:))
     gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
     small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.08);
@@ -257,6 +271,7 @@ xyz2 = tr(1:3,4);
 theta2 = deg2rad([180 0 0]);
 [qMatrix, steps] = RMRC(kuka, 5, xyz2, theta2);
 for i=1:steps
+    checkEStop(GUI);
     kuka.model.animate(qMatrix(i,:))
     gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
     small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.08);
@@ -389,5 +404,15 @@ function [qMatrix, steps] = RMRC2(name, time, xyz2, theta2)
             end
         end
         qMatrix(i+1,:) = qMatrix(i,:) + deltaT*qdot(i,:);                         	% Update next joint state based on joint velocities
+    end
+end
+
+%% E-stop function
+function checkEStop(GUI)
+    while GUI.StopCheck == true
+        if GUI.StopCheck == false
+            break
+        end
+        pause(.1);
     end
 end
