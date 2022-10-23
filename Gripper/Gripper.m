@@ -23,7 +23,7 @@ classdef Gripper < handle
 %         finger1; finger2; finger3;
 
         %> Workspace
-        workspace = [-0.25 0.25 -0.25 0.25 -0.1 0.25];
+        workspace = [-0.25 0.25 -0.25 0.25 0 0.25];
         
     end
 

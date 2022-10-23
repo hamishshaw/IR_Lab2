@@ -2,7 +2,7 @@ clf; clear; close all; clc;
 set(0,'DefaultFigureWindowStyle','docked');
 
 %% Surface
-surf([-2,-2;2,2],[-2,2;-2,2],[0.01,0.01;0.01,0.01],'CData',imread('concrete.jpg'),'FaceColor','texturemap');
+surf([-2,-2;2,2],[-2,2.5;-2,2.5],[0.01,0.01;0.01,0.01],'CData',imread('concrete.jpg'),'FaceColor','texturemap');
 
 camlight;
 hold on;
@@ -15,7 +15,8 @@ GUI = move_GUI;
 conveyor1 = placeply('Conveyor_Belt.ply',0,0,0,0);
 conveyor2 = placeply('Conveyor_Belt.ply',0,0,0,pi);
 pallet = placeply('pallet.ply',0,0.3,0,0); % 0.142m high
-beam = placeply('beams.ply',0,0.3,0,0);
+beam = placeply('beams_safety_barrier_curtain_forklift.ply',0,0.3,0,0);
+% beam = placeply('beams.ply',0,0.3,0,0);
 Table = placeply('Table.ply',0.5,0,0,pi/2); % 0.4m high
 Table2 = placeply('Table.ply',0.8,0,0,pi/2);
 
