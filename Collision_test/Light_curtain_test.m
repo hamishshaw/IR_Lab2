@@ -60,7 +60,7 @@ for i=1:steps
         vertex = bigboxVert(:,1:3);
     end
     %start checking for collisions
-    if i > 100 && collision == false && collisionavoided == false
+    if i > 100 && collision == false && collisionavoided == false && mod(i,2)==0
         bigboxVert = bigboxVert*transl(-0.03,0,0)';
         set(bigbox,'Vertices', bigboxVert(:,1:3));
         bigboxfaces = get(bigbox,'Faces');
@@ -94,18 +94,17 @@ for i=1:steps
             %move the arm
             kuka.model.animate(qMatrixmoveaway(p,:));
             drawnow();
-            %also move the box 
-            if boxcount < 100
-             bigboxVert = bigboxVert*transl(-0.03,0,0)';
-             set(bigbox,'Vertices', bigboxVert(:,1:3));
-             boxcount = boxcount+1;
-             
+            %also move the box
+            if boxcount < 100 && mod(p,2)==0
+                bigboxVert = bigboxVert*transl(-0.03,0,0)';
+                set(bigbox,'Vertices', bigboxVert(:,1:3));
+                boxcount = boxcount+1;
+                
             end
-             
+            
         end
-        display('shit')
-        
-        pause(5);
+   
+     
         %move the arm back
         tr = kuka.model.fkine(qMatrix(i,:));
         xyzcollision = tr(1:3,4);
@@ -114,16 +113,16 @@ for i=1:steps
         for p = 1:stepscollision
             kuka.model.animate(qMatrixmoveaway(p,:))
             drawnow();
-            if boxcount < 100
-            bigboxVert = bigboxVert*transl(-0.03,0,0)';
-            set(bigbox,'Vertices', bigboxVert(:,1:3));
-            boxcount= boxcount+1;
+            if boxcount < 100 && mod(p,2)==0
+                bigboxVert = bigboxVert*transl(-0.03,0,0)';
+                set(bigbox,'Vertices', bigboxVert(:,1:3));
+                boxcount= boxcount+1;
             end
         end
         collisionavoided = true;
         delete(bigbox);
     end
-  
+    
     %animating kuka when no collision detected
  
         kuka.model.animate(qMatrix(i,:))
