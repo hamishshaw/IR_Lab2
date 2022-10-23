@@ -52,7 +52,6 @@ end
 collision = false;
 collisionavoided = false;
 maxzclear = 0;
-boxcount = 0;
 for i=1:steps
     %generate box at 50 steps
     if i == 100
@@ -65,7 +64,6 @@ for i=1:steps
         set(bigbox,'Vertices', bigboxVert(:,1:3));
         bigboxfaces = get(bigbox,'Faces');
         vertex = bigboxVert(:,1:3);
-        boxcount = boxcount+1;
         bigboxnormals = getfacenormals(vertex,bigboxfaces);
         for n = 1:21
             for faceIndex = 1:size(bigboxfaces,1)
@@ -95,12 +93,8 @@ for i=1:steps
             kuka.model.animate(qMatrixmoveaway(p,:));
             drawnow();
             %also move the box 
-            if boxcount < 100
              bigboxVert = bigboxVert*transl(-0.03,0,0)';
              set(bigbox,'Vertices', bigboxVert(:,1:3));
-             boxcount = boxcount+1;
-             
-            end
              
         end
         display('shit')
@@ -114,11 +108,9 @@ for i=1:steps
         for p = 1:stepscollision
             kuka.model.animate(qMatrixmoveaway(p,:))
             drawnow();
-            if boxcount < 100
             bigboxVert = bigboxVert*transl(-0.03,0,0)';
             set(bigbox,'Vertices', bigboxVert(:,1:3));
-            boxcount= boxcount+1;
-            end
+            
         end
         collisionavoided = true;
         delete(bigbox);
