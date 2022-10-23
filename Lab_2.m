@@ -24,7 +24,7 @@ Table2 = placeply('Table.ply',0.8,0,0,pi/2);
 workspace = [-0.5 0.5 -0.5 0.5 0 0.5];
 L1 = Link('d',0,'a',0,'alpha',0, 'offset',0);
 % Box 1
-box1 = SerialLink([L1],'name','box1'); % 0.2m high
+box1 = SerialLink(L1,'name','box1'); % 0.2m high
 box1.base = transl(0,1.05,0.142);
 [faceData,vertexData] = plyread('cardboardBox.ply','tri');
 box1.faces = {faceData, []};
@@ -33,7 +33,7 @@ box1.delay = 0;
 plot3d(box1,0,'workspace',workspace);
 
 % Box 2
-box2 = SerialLink([L1],'name','box2');
+box2 = SerialLink(L1,'name','box2');
 box2.base = transl(0,1.3,0.142);
 [faceData,vertexData] = plyread('cardboardBox.ply','tri');
 box2.faces = {faceData, []};
@@ -42,7 +42,7 @@ box2.delay = 0;
 plot3d(box2,0,'workspace',workspace);
 
 % Box 3
-box3 = SerialLink([L1],'name','box3');
+box3 = SerialLink(L1,'name','box3');
 box3.base = transl(0,1.55,0.142);
 [faceData,vertexData] = plyread('cardboardBox.ply','tri');
 box3.faces = {faceData, []};
@@ -51,7 +51,7 @@ box3.delay = 0;
 plot3d(box3,0,'workspace',workspace);
 
 % Box contents
-small = SerialLink([L1],'name','small'); % 0.07m high
+small = SerialLink(L1,'name','small'); % 0.07m high
 small.base = transl(0,0.65,0.4);
 [faceData,vertexData] = plyread('smallerBox.ply','tri');
 small.faces = {faceData, []};
@@ -100,18 +100,18 @@ GUI.KUKA = kuka.model;
 %% Setting up grippers
 % UR3 gripper (suction), 0.12m high
 L1 = Link('d',0,'a',0,'alpha',0, 'offset',0);
-ur3Grip = SerialLink([L1],'name','ur3Grip');
+ur3Grip = SerialLink(L1,'name','ur3Grip');
 ur3Grip.base = ur3.model.fkine(ur3_startQ) * trotx(pi) * transl(0,0,-0.11);
 [faceData,vertexData] = plyread('vacuumGripper.ply','tri');
 ur3Grip.faces = {faceData, []};
 ur3Grip.points = {vertexData, []};
 plot3d(ur3Grip,0,'workspace',workspace);
 ur3Grip.delay = 0;
-% GUI.UR3Grip = ur3Grip;
+GUI.UR3Grip = ur3Grip;
 
 % kuka gripper
 kukaGrip = Gripper(kuka.model.fkine(kuka.model.getpos())); % Base approx 0.05m high
-% GUI.KUKAGrip = kukaGrip;
+GUI.KUKAGrip = kukaGrip;
 
 %% Moving the boxes
 % Move to box 1

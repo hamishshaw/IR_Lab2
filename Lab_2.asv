@@ -2,7 +2,7 @@ clf; clear; close all; clc;
 set(0,'DefaultFigureWindowStyle','docked');
 
 %% Surface
-surf([-2,-2;2,2],[-2,2;-2,2],[0.01,0.01;0.01,0.01],'CData',imread('concrete.jpg'),'FaceColor','texturemap');
+surf([-2,-2;2,2],[-2,2.5;-2,2.5],[0.01,0.01;0.01,0.01],'CData',imread('concrete.jpg'),'FaceColor','texturemap');
 
 camlight;
 hold on;
@@ -15,7 +15,8 @@ GUI = move_GUI;
 conveyor1 = placeply('Conveyor_Belt.ply',0,0,0,0);
 conveyor2 = placeply('Conveyor_Belt.ply',0,0,0,pi);
 pallet = placeply('pallet.ply',0,0.3,0,0); % 0.142m high
-beam = placeply('beams.ply',0,0.3,0,0);
+beam = placeply('beams_safety_barrier_curtain_forklift.ply',0,0.3,0,0);
+% beam = placeply('beams.ply',0,0.3,0,0);
 Table = placeply('Table.ply',0.5,0,0,pi/2); % 0.4m high
 Table2 = placeply('Table.ply',0.8,0,0,pi/2);
 
@@ -23,7 +24,7 @@ Table2 = placeply('Table.ply',0.8,0,0,pi/2);
 workspace = [-0.5 0.5 -0.5 0.5 0 0.5];
 L1 = Link('d',0,'a',0,'alpha',0, 'offset',0);
 % Box 1
-box1 = SerialLink([L1],'name','box1'); % 0.2m high
+box1 = SerialLink(L1,'name','box1'); % 0.2m high
 box1.base = transl(0,1.05,0.142);
 [faceData,vertexData] = plyread('cardboardBox.ply','tri');
 box1.faces = {faceData, []};
@@ -32,7 +33,7 @@ box1.delay = 0;
 plot3d(box1,0,'workspace',workspace);
 
 % Box 2
-box2 = SerialLink([L1],'name','box2');
+box2 = SerialLink(L1,'name','box2');
 box2.base = transl(0,1.3,0.142);
 [faceData,vertexData] = plyread('cardboardBox.ply','tri');
 box2.faces = {faceData, []};
@@ -41,7 +42,7 @@ box2.delay = 0;
 plot3d(box2,0,'workspace',workspace);
 
 % Box 3
-box3 = SerialLink([L1],'name','box3');
+box3 = SerialLink(L1,'name','box3');
 box3.base = transl(0,1.55,0.142);
 [faceData,vertexData] = plyread('cardboardBox.ply','tri');
 box3.faces = {faceData, []};
@@ -50,7 +51,7 @@ box3.delay = 0;
 plot3d(box3,0,'workspace',workspace);
 
 % Box contents
-small = SerialLink([L1],'name','small'); % 0.07m high
+small = SerialLink(L1,'name','small'); % 0.07m high
 small.base = transl(0,0.65,0.4);
 [faceData,vertexData] = plyread('smallerBox.ply','tri');
 small.faces = {faceData, []};
@@ -293,14 +294,14 @@ tr = transl(0,0,0.55);
 xyz2 = tr(1:3,4);
 theta2 = deg2rad([180 0 0]);
 [qMatrix, steps] = RMRC(kuka, 5, xyz2, theta2);
-for i=1:steps
-    checkEStop(GUI);
-    kuka.model.animate(qMatrix(i,:))
-    gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
-    small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.08);
-    small.animate(0)
-    drawnow();
-end
+% for i=1:steps
+%     checkEStop(GUI);
+%     kuka.model.animate(qMatrix(i,:))
+%     gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
+%     small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.08);
+%     small.animate(0)
+%     drawnow();
+% end
 for i=1:steps
     checkEStop(GUI);
     %generate box at 50 steps
@@ -338,6 +339,7 @@ for i=1:steps
         [qMatrixmoveaway, stepscollision] = RMRC(kuka, 2, xyzcollision, theta2);
         
         for p = 1:stepscollision
+            checkEStop(GUI);
             %move the arm
             kuka.model.animate(qMatrixmoveaway(p,:));
             gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
@@ -361,18 +363,23 @@ for i=1:steps
         [qMatrixmoveaway, stepscollision] = RMRC(kuka, 2, xyzcollision, theta2);
         
         for p = 1:stepscollision
+            % move kuka, gripper and box
             kuka.model.animate(qMatrixmoveaway(p,:))
+            gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
+            small.base = kuka.model.fkine(qMatrixmoveaway(p,:)) * transl(0,0,0.08);
+            small.animate(0)
             drawnow();
+            % move box
             if boxcount < 100 && mod(p,2)==0
-            bigboxVert = bigboxVert*transl(-0.03,0,0)';
-            set(bigbox,'Vertices', bigboxVert(:,1:3));
-            boxcount= boxcount+1;
+                bigboxVert = bigboxVert*transl(-0.03,0,0)';
+                set(bigbox,'Vertices', bigboxVert(:,1:3));
+                boxcount= boxcount+1;
             end
         end
         collisionavoided = true;
         delete(bigbox);
     end
-  
+    
     %animating kuka when no collision detected
  
         kuka.model.animate(qMatrix(i,:))
