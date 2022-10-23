@@ -106,11 +106,11 @@ ur3Grip.faces = {faceData, []};
 ur3Grip.points = {vertexData, []};
 plot3d(ur3Grip,0,'workspace',workspace);
 ur3Grip.delay = 0;
-GUI.UR3Grip = ur3Grip;
+% GUI.UR3Grip = ur3Grip;
 
 % kuka gripper
 kukaGrip = Gripper(kuka.model.fkine(kuka.model.getpos())); % Base approx 0.05m high
-GUI.KUKAGrip = kukaGrip;
+% GUI.KUKAGrip = kukaGrip;
 
 %% Moving the boxes
 % Move to box 1
