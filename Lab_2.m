@@ -199,17 +199,31 @@ for i=1:steps
 end
 
 % Using the KUKA now
-% Go to small box
-tr = small.fkine(0) * transl(0,0,0.1);
+% Go above small box
+tr = small.fkine(0) * transl(0,0,0.3);
 xyz2 = tr(1:3,4);
-xyz2(3)
 theta2 = deg2rad([180 0 0]);
+openGripper(kukaGrip);
 [qMatrix, steps] = RMRC(kuka, 10, xyz2, theta2);
 for i=1:steps
+    gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
     kuka.model.animate(qMatrix(i,:))
     drawnow();
 end
 
+% Go to small box
+tr = small.fkine(0) * transl(0,0,0.15);
+xyz2 = tr(1:3,4);
+theta2 = deg2rad([180 0 0]);
+openGripper(kukaGrip);
+[qMatrix, steps] = RMRC(kuka, 5, xyz2, theta2);
+for i=1:steps
+    gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
+    kuka.model.animate(qMatrix(i,:))
+    drawnow();
+end
+
+closeGripper(kukaGrip);
 % Pick up small box
 tr = small.fkine(0);
 xyz2 = tr(1:3,4);
@@ -218,7 +232,8 @@ theta2 = deg2rad([180 0 0]);
 [qMatrix, steps] = RMRC(kuka, 3, xyz2, theta2);
 for i=1:steps
     kuka.model.animate(qMatrix(i,:))
-    small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.03);
+    gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
+    small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.08);
     small.animate(0)
     drawnow();
 end
@@ -230,7 +245,8 @@ theta2 = deg2rad([180 0 90]);
 [qMatrix, steps] = RMRC(kuka, 5, xyz2, theta2);
 for i=1:steps
     kuka.model.animate(qMatrix(i,:))
-    small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.03);
+    gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
+    small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.08);
     small.animate(0)
     drawnow();
 end
@@ -242,10 +258,12 @@ theta2 = deg2rad([180 0 0]);
 [qMatrix, steps] = RMRC(kuka, 5, xyz2, theta2);
 for i=1:steps
     kuka.model.animate(qMatrix(i,:))
-    small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.03);
+    gripperAnimate(kukaGrip, kuka.model.fkine(kuka.model.getpos()));
+    small.base = kuka.model.fkine(qMatrix(i,:)) * transl(0,0,0.08);
     small.animate(0)
     drawnow();
 end
+openGripper(kukaGrip);
 %% RMRC function for no change in roll and pitch
 function [qMatrix, steps] = RMRC(name, time, xyz2, theta2)
     deltaT = 0.02;      % Control frequency
