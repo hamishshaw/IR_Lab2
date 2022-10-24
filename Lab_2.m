@@ -114,6 +114,11 @@ kukaGrip = Gripper(kuka.model.fkine(kuka.model.getpos())); % Base approx 0.05m h
 GUI.KUKAGrip = kukaGrip;
 
 %% Moving the boxes
+ur3.model.delay = 0;
+ur3Grip.delay = 0;
+kuka.model.delay = 0;
+box1.delay = 0;
+
 % Move to box 1
 tr = box1.fkine(0) * transl(0,0,0.32);
 xyz2 = tr(1:3,4);
@@ -188,6 +193,7 @@ end
 
 pause(2);
 plot3d(small,0,'workspace',workspace);
+small.delay = 0;
 
 % Move to box again
 tr = transl(0,0.65,0.7);
